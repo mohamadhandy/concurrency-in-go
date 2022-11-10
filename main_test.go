@@ -1,34 +1,16 @@
 package main
 
 import (
-	"io"
-	"os"
-	"strings"
-	"sync"
 	"testing"
 )
 
-func Test_printSomething(t *testing.T) {
-	stdOut := os.Stdout
+func Test_printMessage(t *testing.T) {
+	msg = "hello, cosmos!"
 
-	read, write, _ := os.Pipe()
-	os.Stdout = write
+	printMessage()
+	output := msg
 
-	var wg sync.WaitGroup
-	wg.Add(1)
-
-	go printSomething("gamma", &wg)
-
-	wg.Wait()
-
-	_ = write.Close()
-	result, _ := io.ReadAll(read)
-	output := string(result)
-
-	os.Stdout = stdOut
-
-	if !strings.Contains(output, "gamma") {
-		t.Errorf("Expected gamma, but it didn't")
+	if output != msg {
+		t.Errorf("Expected hello, cosmos! but it didn't")
 	}
-
 }
