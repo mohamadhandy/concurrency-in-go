@@ -2,12 +2,14 @@ package main
 
 import (
 	"fmt"
+	"sync"
 )
 
 var msg string
 
-func updateMessage(s string) {
+func updateMessage(s string, wg *sync.WaitGroup) {
 	msg = s
+	defer wg.Done()
 }
 
 func printMessage() {
@@ -22,15 +24,23 @@ func main() {
 	// Then, write a test for all three functions in this program: updateMessage(),
 	// printMessage(), and main().
 
+	var wg sync.WaitGroup
+
 	msg = "Hello, world!"
 
-	updateMessage("Hello, universe!")
+	wg.Add(1)
+	go updateMessage("Hello, universe!", &wg)
+	wg.Wait()
 	printMessage()
 
-	updateMessage("Hello, cosmos!")
+	wg.Add(1)
+	go updateMessage("Hello, cosmos!", &wg)
+	wg.Wait()
 	printMessage()
 
-	updateMessage("Hello, world!")
+	wg.Add(1)
+	go updateMessage("Hello, world!", &wg)
+	wg.Wait()
 
 	printMessage()
 }
